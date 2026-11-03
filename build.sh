@@ -7,6 +7,11 @@ cd "$(dirname "$0")"
 ORIG="${1:?usage: ./build.sh original.apk [keystore alias storepass keypass]}"
 KS="${2:-holidaybrilliant.jks}"; ALIAS="${3:-hb}"; SP="${4:-changeit}"; KP="${5:-$SP}"
 
+ORIG_SHA256=05801c9fae2dc65b2835357285794edcdb8ea7d6d68b8cd7380b0de792ce879a
+if [ "$(sha256sum "$ORIG" | cut -d' ' -f1)" != "$ORIG_SHA256" ]; then
+  echo "Warning: $ORIG is not the known Holiday Brilliant 1.3 APK (sha256 mismatch); patching may fail." >&2
+fi
+
 mkdir -p tools build
 [ -f tools/apktool.jar ] || curl -fsSL -o tools/apktool.jar https://github.com/iBotPeaches/Apktool/releases/download/v2.10.0/apktool_2.10.0.jar
 [ -f tools/uber-apk-signer.jar ] || curl -fsSL -o tools/uber-apk-signer.jar https://github.com/patrickfav/uber-apk-signer/releases/download/v1.3.0/uber-apk-signer-1.3.0.jar

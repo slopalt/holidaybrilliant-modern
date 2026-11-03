@@ -16,6 +16,29 @@ This repo contains **no original app code or assets**. You supply your own copy 
 
 Needs Java 11+, Python 3, curl and unzip. Downloads Apktool 2.10.0 and uber-apk-signer 1.3.0 from GitHub.
 
+## Automatic releases (GitHub Actions)
+
+`.github/workflows/release.yml` builds, signs and publishes a GitHub Release when you push a tag:
+
+```sh
+git tag v1.3.1 && git push origin v1.3.1
+```
+
+(or run **Release** manually from the Actions tab and type a tag). Each release gets an increasing
+`versionCode`, so phones install it as an update.
+
+One-time setup in **Settings → Secrets and variables → Actions**:
+
+| Name | Kind | Value |
+|---|---|---|
+| `ORIGINAL_APK_URL` | Variable | Direct download link to the original 1.3 APK. The workflow checks its SHA-256 (`05801c9f…879a`), so any host works |
+| `KEYSTORE_BASE64` | Secret | Your signing key, base64: `base64 -w0 my.jks` (macOS: `base64 -i my.jks`) |
+| `KEYSTORE_PASSWORD` | Secret | Keystore password |
+| `KEYSTORE_ALIAS` | Secret, optional | Key alias (default `hb`) |
+| `KEY_PASSWORD` | Secret, optional | Key password, if different from the keystore password |
+
+Always sign with the same key, or existing installs can't update.
+
 ## Why the original stopped working
 
 1. **Google Play license check (LVL).** The launcher activity asked Play to verify a purchase. The app is

@@ -161,5 +161,8 @@ def mf(s):
 rw(MF, mf)
 
 Y = 'apktool.yml'
-rw(Y, lambda s: sub1(sub1(sub1(s, "targetSdkVersion: 19", "targetSdkVersion: 34"), "versionCode: 5", "versionCode: 6"), "versionName: 1.3", "versionName: 1.3-offline"))
+# Version can be overridden (the release workflow does this so every release upgrades the previous one)
+VC = os.environ.get('VERSION_CODE', '6'); VN = os.environ.get('VERSION_NAME', '1.3-offline')
+assert VC.isdigit() and int(VC) > 5, 'VERSION_CODE must be an integer above 5'
+rw(Y, lambda s: sub1(sub1(sub1(s, "targetSdkVersion: 19", "targetSdkVersion: 34"), "versionCode: 5", "versionCode: " + VC), "versionName: 1.3", "versionName: '" + VN + "'"))
 print("patched")
